@@ -6,15 +6,15 @@
 <title>Valhalla Networks | Deportation RP</title>
 <style>
   :root {
-    --bg: #0a0b0d; --panel: #111316; --raised: #1a1c20; --border: #30343a;
-    --text: #ececE8; --muted: #acaeac; --faint: #76797c;
-    --gold: #c9a227; --gold-light: #eed070;
-    --ice: #5c8ade; --afa: #d84034; --pat: #96aa64;
+    --bg: #140c26; --panel: #1d1236; --raised: #2a1b4a; --border: #4a3478;
+    --text: #f6f2ff; --muted: #c6b8e6; --faint: #8e7cb8;
+    --gold: #8b4ce8; --gold-light: #b995f5;
+    --ice: #b9b7e8; --afa: #dbbce6; --pat: #b49cda;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; }
   body {
-    background: var(--bg); color: var(--text); overflow: hidden;
+    background: radial-gradient(ellipse at 50% 35%, #33205f 0%, var(--bg) 70%); color: var(--text); overflow: hidden;
     font-family: "Bahnschrift", "DIN Alternate", "Roboto Condensed", "Segoe UI", Arial, sans-serif;
     display: flex; flex-direction: column;
   }
@@ -25,10 +25,10 @@
     background-size: 64px 64px;
     mask-image: radial-gradient(ellipse at center, #000 20%, transparent 75%);
   }
-  .rule { height: 4px; background: linear-gradient(90deg, var(--ice) 0 33.3%, var(--afa) 33.3% 66.6%, var(--pat) 66.6%); }
+  .rule { height: 4px; background: linear-gradient(90deg, #5a2fae, #8b4ce8, #b995f5, #8b4ce8, #5a2fae); }
   main { position: relative; flex: 1; display: grid; place-items: center; padding: 32px 16px; }
   .center { width: min(960px, 100%); text-align: center; }
-  .logo { width: min(640px, 90%); height: auto; filter: drop-shadow(0 12px 32px rgba(0,0,0,.6)); }
+  .logo { width: min(720px, 92%); height: auto; filter: drop-shadow(0 12px 32px rgba(0,0,0,.6)); }
   .mode { margin-top: 18px; letter-spacing: .5em; font-size: 20px; font-weight: 700; color: var(--gold-light); }
   .server { margin-top: 8px; color: var(--muted); font-size: 15px; letter-spacing: .08em; }
   .factions { display: flex; gap: 12px; justify-content: center; margin-top: 36px; flex-wrap: wrap; }
@@ -51,7 +51,7 @@
 <div class="rule"></div>
 <main>
   <div class="center">
-    <img class="logo" src="valhalla_logo.png" alt="Valhalla Networks">
+    <img class="logo" src="valhalla_logo_v2.png" alt="Valhalla Networks">
     <div class="mode">DEPORTATION RP</div>
     <div class="server" id="server">Connecting to server&hellip;</div>
     <div class="factions">
