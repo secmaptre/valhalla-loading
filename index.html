@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Valhalla Networks | Deportation RP</title>
+<style>
+  :root {
+    --bg: #0a0b0d; --panel: #111316; --raised: #1a1c20; --border: #30343a;
+    --text: #ececE8; --muted: #acaeac; --faint: #76797c;
+    --gold: #c9a227; --gold-light: #eed070;
+    --ice: #5c8ade; --afa: #d84034; --pat: #96aa64;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg); color: var(--text); overflow: hidden;
+    font-family: "Bahnschrift", "DIN Alternate", "Roboto Condensed", "Segoe UI", Arial, sans-serif;
+    display: flex; flex-direction: column;
+  }
+  /* Subtle tactical grid behind everything. */
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; opacity: .5;
+    background-image: linear-gradient(var(--raised) 1px, transparent 1px), linear-gradient(90deg, var(--raised) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse at center, #000 20%, transparent 75%);
+  }
+  .rule { height: 4px; background: linear-gradient(90deg, var(--ice) 0 33.3%, var(--afa) 33.3% 66.6%, var(--pat) 66.6%); }
+  main { position: relative; flex: 1; display: grid; place-items: center; padding: 32px 16px; }
+  .center { width: min(960px, 100%); text-align: center; }
+  .logo { width: min(640px, 90%); height: auto; filter: drop-shadow(0 12px 32px rgba(0,0,0,.6)); }
+  .mode { margin-top: 18px; letter-spacing: .5em; font-size: 20px; font-weight: 700; color: var(--gold-light); }
+  .server { margin-top: 8px; color: var(--muted); font-size: 15px; letter-spacing: .08em; }
+  .factions { display: flex; gap: 12px; justify-content: center; margin-top: 36px; flex-wrap: wrap; }
+  .faction { background: var(--panel); border: 1px solid var(--border); border-top: 3px solid; padding: 12px 18px; min-width: 200px; text-align: left; }
+  .faction b { display: block; font-size: 18px; letter-spacing: .12em; }
+  .faction span { color: var(--muted); font-size: 13px; }
+  .ice { border-top-color: var(--ice); } .ice b { color: var(--ice); }
+  .afa { border-top-color: var(--afa); } .afa b { color: var(--afa); }
+  .pat { border-top-color: var(--pat); } .pat b { color: var(--pat); }
+  footer { position: relative; padding: 18px 32px 26px; background: linear-gradient(transparent, rgba(0,0,0,.65)); }
+  .tip { color: var(--muted); font-size: 15px; min-height: 22px; margin-bottom: 14px; transition: opacity .4s; }
+  .tip b { color: var(--gold-light); letter-spacing: .15em; font-size: 12px; margin-right: 10px; }
+  .status { display: flex; justify-content: space-between; font-size: 13px; color: var(--faint); letter-spacing: .08em; margin-bottom: 8px; gap: 16px; }
+  .status .file { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bar { height: 6px; background: var(--raised); border: 1px solid var(--border); }
+  .fill { height: 100%; width: 0; background: var(--gold); transition: width .3s; }
+</style>
+</head>
+<body>
+<div class="rule"></div>
+<main>
+  <div class="center">
+    <img class="logo" src="valhalla_logo.png" alt="Valhalla Networks">
+    <div class="mode">DEPORTATION RP</div>
+    <div class="server" id="server">Connecting to server&hellip;</div>
+    <div class="factions">
+      <div class="faction ice"><b>ICE</b><span>Escort NPCs to the handover terminal.</span></div>
+      <div class="faction afa"><b>ANTIFA</b><span>Bring NPCs to the refuge. Hold the city.</span></div>
+      <div class="faction pat"><b>PATRIOTS</b><span>Hold city points against Antifa.</span></div>
+    </div>
+  </div>
+</main>
+<footer>
+  <div class="tip" id="tip"><b>TIP</b><span id="tipText">Press F1 for the operations menu.</span></div>
+  <div class="status"><span id="stage">LOADING</span><span class="file" id="file"></span><span id="count"></span></div>
+  <div class="bar"><div class="fill" id="fill"></div></div>
+</footer>
+<script>
+  // Garry's Mod loading screen callbacks. Everything here is optional; the page also works in a browser.
+  var total = 0, needed = 0;
+  var tips = [
+    "Press F1 for the operations menu. Daily Ops gives three contracts every day.",
+    "Complete all three daily contracts to grow your service streak and bonus XP.",
+    "Join a unit in F1 > Units. Your tag appears on your name, e.g. [SRT].",
+    "M opens the aerial operations map. N toggles the minimap.",
+    "Medics: hold E on a casualty marker to revive a teammate.",
+    "Service grades unlock new uniforms and elite units. Kills never give XP.",
+    "Squad leaders pick shared orders: Escort, Control or Raid.",
+    "Antifa and Patriots can raid each other's armory for Raider kits.",
+    "Wear [V-N] in your Steam name: +25 XP every 3 days and a Valhalla Member badge."
+  ];
+  var tipIndex = 0;
+  function el(id) { return document.getElementById(id); }
+  function progress() {
+    if (total > 0) {
+      var done = Math.max(0, total - needed);
+      el("fill").style.width = Math.min(100, done / total * 100) + "%";
+      el("count").textContent = done + " / " + total;
+    }
+  }
+  function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
+    el("server").textContent = (servername || "Valhalla Networks") + "  |  " + (mapname || "") + "  |  " + (maxplayers || "?") + " slots";
+  }
+  function SetFilesTotal(value) { total = Number(value) || 0; progress(); }
+  function SetFilesNeeded(value) { needed = Number(value) || 0; progress(); }
+  function DownloadingFile(name) { el("stage").textContent = "DOWNLOADING"; el("file").textContent = name || ""; }
+  function SetStatusChanged(status) {
+    el("stage").textContent = String(status || "LOADING").toUpperCase();
+    if (/sending client info|client info/i.test(status || "")) el("fill").style.width = "100%";
+  }
+  setInterval(function () {
+    var tip = el("tip");
+    tip.style.opacity = 0;
+    setTimeout(function () {
+      tipIndex = (tipIndex + 1) % tips.length;
+      el("tipText").textContent = tips[tipIndex];
+      tip.style.opacity = 1;
+    }, 400);
+  }, 6000);
+</script>
+</body>
+</html>
