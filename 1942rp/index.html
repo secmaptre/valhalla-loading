@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Valhalla Networks | 1942 RP</title>
+<style>
+  /* Written for old embedded browsers too (GMod): no CSS variables, no grid, prefixed animations. */
+  * { box-sizing: border-box; -webkit-box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: #0f0820; color: #f6f2ff; overflow: hidden; position: relative;
+    font-family: "Bahnschrift", "DIN Alternate", "Roboto Condensed", "Segoe UI", Arial, sans-serif;
+  }
+  .bg { position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 50% 40%, #3a2170 0%, #1a0e36 45%, #0b0618 100%); }
+  .orb { position: absolute; border-radius: 50%; opacity: .35;
+    background: radial-gradient(circle, rgba(139,76,232,.9) 0%, rgba(139,76,232,0) 70%);
+    -webkit-animation: drift 18s ease-in-out infinite alternate; animation: drift 18s ease-in-out infinite alternate; }
+  .o1 { width: 520px; height: 520px; left: -120px; top: 10%; }
+  .o2 { width: 640px; height: 640px; right: -180px; top: 30%; -webkit-animation-duration: 24s; animation-duration: 24s; }
+  .o3 { width: 380px; height: 380px; left: 40%; bottom: -160px; -webkit-animation-duration: 21s; animation-duration: 21s; }
+  @-webkit-keyframes drift { from { -webkit-transform: translate(0, 0); } to { -webkit-transform: translate(60px, -40px); } }
+  @keyframes drift { from { transform: translate(0, 0); } to { transform: translate(60px, -40px); } }
+  .sweep { position: absolute; top: 0; bottom: 0; width: 40%; left: -40%;
+    background: linear-gradient(100deg, rgba(255,255,255,0) 0%, rgba(185,149,245,.07) 50%, rgba(255,255,255,0) 100%);
+    -webkit-animation: sweep 9s linear infinite; animation: sweep 9s linear infinite; }
+  @-webkit-keyframes sweep { from { left: -40%; } to { left: 110%; } }
+  @keyframes sweep { from { left: -40%; } to { left: 110%; } }
+  .vignette { position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(0,0,0,.7) 100%); }
+  .topline { position: absolute; left: 0; right: 0; top: 0; height: 3px;
+    background: linear-gradient(90deg, #3d1f80, #8b4ce8, #c9a8ff, #8b4ce8, #3d1f80); }
+
+  .center { position: absolute; left: 0; right: 0; top: 50%; margin-top: -230px; text-align: center; }
+  .logo { width: 760px; max-width: 90%; height: auto;
+    -webkit-animation: glow 4s ease-in-out infinite alternate; animation: glow 4s ease-in-out infinite alternate; }
+  @-webkit-keyframes glow { from { -webkit-filter: drop-shadow(0 0 10px rgba(139,76,232,.35)); } to { -webkit-filter: drop-shadow(0 0 30px rgba(170,120,255,.75)); } }
+  @keyframes glow { from { filter: drop-shadow(0 0 10px rgba(139,76,232,.35)); } to { filter: drop-shadow(0 0 30px rgba(170,120,255,.75)); } }
+  .mode { margin-top: 10px; letter-spacing: 14px; font-size: 22px; font-weight: 700; color: #c9a8ff; padding-left: 14px; }
+
+  .loader { width: 620px; max-width: 86%; margin: 44px auto 0; }
+  .bar { height: 8px; background: rgba(255,255,255,.08); border-radius: 8px; overflow: hidden; }
+  .fill { height: 100%; width: 0; border-radius: 8px; background: linear-gradient(90deg, #6a35d0, #b995f5);
+    box-shadow: 0 0 14px rgba(185,149,245,.8); -webkit-transition: width .4s; transition: width .4s; }
+  .row { overflow: hidden; margin-top: 10px; font-size: 13px; letter-spacing: 2px; color: #a996d4; }
+  .row .l { float: left; } .row .r { float: right; }
+  .file { display: block; margin-top: 4px; font-size: 11px; color: #7d6aa8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 1px; }
+
+  .bottom { position: absolute; left: 32px; right: 32px; bottom: 28px; }
+  .card { background: rgba(20,12,40,.72); border: 1px solid rgba(139,76,232,.35); border-radius: 12px; padding: 14px 18px; }
+  .server { float: left; width: 330px; }
+  .server b { display: block; font-size: 12px; letter-spacing: 3px; color: #c9a8ff; margin-bottom: 6px; }
+  .server span { display: block; font-size: 14px; color: #e6dcff; line-height: 20px; }
+  .tip { position: absolute; left: 50%; bottom: 0; width: 520px; margin-left: -260px; text-align: center;
+    -webkit-transition: opacity .4s; transition: opacity .4s; }
+  .tip b { display: block; font-size: 12px; letter-spacing: 3px; color: #c9a8ff; margin-bottom: 6px; }
+  .tip span { font-size: 15px; color: #e6dcff; line-height: 21px; }
+  .factions { float: right; }
+  .chip { display: inline-block; margin-left: 8px; padding: 10px 14px; border-radius: 10px; font-size: 13px; letter-spacing: 3px;
+    font-weight: 700; background: rgba(20,12,40,.72); border: 1px solid rgba(255,255,255,.08); border-bottom: 3px solid; }
+  .ice { color: #b9b7e8; border-bottom-color: #b9b7e8; } .afa { color: #dbbce6; border-bottom-color: #dbbce6; }
+  .pat { color: #b49cda; border-bottom-color: #b49cda; } .mig { color: #ccd4f2; border-bottom-color: #ccd4f2; }
+  @media (max-width: 1100px) { .tip { display: none; } }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+<div class="sweep"></div>
+<div class="vignette"></div>
+<div class="topline"></div>
+
+<div class="center">
+  <img class="logo" src="../valhalla_logo_v3.png" alt="Valhalla Networks">
+  <div class="mode">1942 RP</div>
+  <div class="loader">
+    <div class="bar"><div class="fill" id="fill"></div></div>
+    <div class="row"><span class="l" id="stage">CONNECTING</span><span class="r" id="count"></span></div>
+    <span class="file" id="file"></span>
+  </div>
+</div>
+
+<div class="bottom">
+  <div class="card server">
+    <b>SERVER</b>
+    <span id="server">Valhalla Networks | 1942 RP</span>
+    <span id="map">Berlin, 1942 - serious roleplay</span>
+  </div>
+  <div class="card tip" id="tip"><b>TIP</b><span id="tipText">Press F1 for your character, inventory and attributes.</span></div>
+  <div class="factions">
+    <span class="chip ice">WEHRMACHT</span><span class="chip afa">STATE</span><span class="chip pat">POLICE</span><span class="chip mig">CIVILIANS</span>
+  </div>
+</div>
+
+<script>
+  // Garry's Mod loading screen callbacks (ES5 only). The page also works in a normal browser.
+  var total = 0, needed = 0, tipIndex = 0;
+  var tips = [
+    "Press F1 for your character, inventory and attributes.",
+    "Press F3 to introduce yourself. Strangers only see your description.",
+    "Stay in character. Use // or /ooc for out-of-character chat, /me and /it for actions.",
+    "Everyone starts as a civilian. Military and state factions are whitelisted - apply in game.",
+    "Uniform lockers in every barracks: change your uniform, rank insignia and gear.",
+    "Soldiers: the quartermaster of your unit resupplies ammunition and signs out weapons.",
+    "Open a bank account with the banker of the Reichsbank. Tellers handle deposits and transfers.",
+    "Look at a door and press F2 to buy, lock or manage it.",
+    "Wear [V-N] in your Steam name to show you belong to Valhalla Networks."
+  ];
+  function el(id) { return document.getElementById(id); }
+  function progress() {
+    if (total > 0) {
+      var done = Math.max(0, total - needed);
+      el("fill").style.width = Math.min(100, done / total * 100) + "%";
+      el("count").textContent = Math.round(done / total * 100) + "%  (" + done + " / " + total + ")";
+    }
+  }
+  function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
+    el("server").textContent = servername || "Valhalla Networks";
+    el("map").textContent = (mapname || "") + "  |  " + (maxplayers || "?") + " slots";
+  }
+  function SetFilesTotal(value) { total = Number(value) || 0; progress(); }
+  function SetFilesNeeded(value) { needed = Number(value) || 0; progress(); }
+  function DownloadingFile(name) { el("stage").textContent = "DOWNLOADING"; el("file").textContent = name || ""; }
+  function SetStatusChanged(status) {
+    el("stage").textContent = String(status || "LOADING").toUpperCase();
+    if (/client info/i.test(status || "")) { el("fill").style.width = "100%"; el("count").textContent = "100%"; }
+  }
+  setInterval(function () {
+    var tip = el("tip");
+    tip.style.opacity = 0;
+    setTimeout(function () {
+      tipIndex = (tipIndex + 1) % tips.length;
+      el("tipText").textContent = tips[tipIndex];
+      tip.style.opacity = 1;
+    }, 400);
+  }, 7000);
+</script>
+</body>
+</html>
