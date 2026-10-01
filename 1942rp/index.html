@@ -5,91 +5,206 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Valhalla Networks | 1942 RP</title>
 <style>
-  /* Written for old embedded browsers too (GMod): no CSS variables, no grid, prefixed animations. */
+  /* Garry's Mod uses an old embedded browser on the default branch: ES5 only, no CSS variables,
+     no grid/flex, -webkit- prefixes on every transform and animation. */
   * { box-sizing: border-box; -webkit-box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; }
   body {
-    background: #0f0820; color: #f6f2ff; overflow: hidden; position: relative;
+    background: #06040d; color: #efe9fb; overflow: hidden; position: relative;
     font-family: "Bahnschrift", "DIN Alternate", "Roboto Condensed", "Segoe UI", Arial, sans-serif;
   }
-  .bg { position: absolute; left: 0; top: 0; right: 0; bottom: 0;
-    background: radial-gradient(ellipse at 50% 40%, #3a2170 0%, #1a0e36 45%, #0b0618 100%); }
-  .orb { position: absolute; border-radius: 50%; opacity: .35;
-    background: radial-gradient(circle, rgba(139,76,232,.9) 0%, rgba(139,76,232,0) 70%);
-    -webkit-animation: drift 18s ease-in-out infinite alternate; animation: drift 18s ease-in-out infinite alternate; }
-  .o1 { width: 520px; height: 520px; left: -120px; top: 10%; }
-  .o2 { width: 640px; height: 640px; right: -180px; top: 30%; -webkit-animation-duration: 24s; animation-duration: 24s; }
-  .o3 { width: 380px; height: 380px; left: 40%; bottom: -160px; -webkit-animation-duration: 21s; animation-duration: 21s; }
-  @-webkit-keyframes drift { from { -webkit-transform: translate(0, 0); } to { -webkit-transform: translate(60px, -40px); } }
-  @keyframes drift { from { transform: translate(0, 0); } to { transform: translate(60px, -40px); } }
-  .sweep { position: absolute; top: 0; bottom: 0; width: 40%; left: -40%;
-    background: linear-gradient(100deg, rgba(255,255,255,0) 0%, rgba(185,149,245,.07) 50%, rgba(255,255,255,0) 100%);
-    -webkit-animation: sweep 9s linear infinite; animation: sweep 9s linear infinite; }
-  @-webkit-keyframes sweep { from { left: -40%; } to { left: 110%; } }
-  @keyframes sweep { from { left: -40%; } to { left: 110%; } }
-  .vignette { position: absolute; left: 0; top: 0; right: 0; bottom: 0;
-    background: radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(0,0,0,.7) 100%); }
+  .cond { font-family: "Bahnschrift SemiBold Condensed", "Bahnschrift Condensed", "Bahnschrift", "Roboto Condensed", Arial Narrow, sans-serif; }
+  .layer { position: absolute; left: 0; top: 0; right: 0; bottom: 0; }
+
+  /* Night sky over Berlin: lavender haze on the horizon, black above. */
+  .sky { background: linear-gradient(to bottom, #050309 0%, #0d0820 38%, #24134a 72%, #3a2170 100%); }
+  .haze { background: radial-gradient(ellipse at 50% 100%, rgba(139,76,232,.45) 0%, rgba(139,76,232,0) 60%); }
+  .cloud { position: absolute; border-radius: 50%; opacity: .5;
+    background: radial-gradient(ellipse at center, rgba(70,48,120,.55) 0%, rgba(70,48,120,0) 70%);
+    -webkit-animation: drift 70s linear infinite alternate; animation: drift 70s linear infinite alternate; }
+  .c1 { width: 900px; height: 220px; left: -10%; top: 12%; }
+  .c2 { width: 1100px; height: 260px; left: 45%; top: 28%; -webkit-animation-duration: 90s; animation-duration: 90s; }
+  .c3 { width: 700px; height: 180px; left: 20%; top: 46%; -webkit-animation-duration: 60s; animation-duration: 60s; }
+  @-webkit-keyframes drift { from { -webkit-transform: translateX(0); } to { -webkit-transform: translateX(160px); } }
+  @keyframes drift { from { transform: translateX(0); } to { transform: translateX(160px); } }
+
+  /* Flak searchlights. Each beam is a tapered SVG cone that swings from its foot. */
+  .beam { position: absolute; bottom: 300px; width: 240px; height: 1400px; margin-left: -120px; opacity: 0;
+    background: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 1000' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='1' x2='0' y2='0'%3E%3Cstop offset='0' stop-color='%23fff4dc' stop-opacity='.6'/%3E%3Cstop offset='.55' stop-color='%23e4d6ff' stop-opacity='.14'/%3E%3Cstop offset='1' stop-color='%23e4d6ff' stop-opacity='0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpolygon points='47.5,1000 52.5,1000 100,0 0,0' fill='url(%23g)'/%3E%3C/svg%3E") no-repeat;
+    background-size: 100% 100%;
+    -webkit-transform-origin: 50% 100%; transform-origin: 50% 100%; }
+  .b1 { left: 13%; -webkit-animation: on .9s 1.0s steps(6) forwards, swingA 17s 1.0s ease-in-out infinite alternate; animation: on .9s 1.0s steps(6) forwards, swingA 17s 1.0s ease-in-out infinite alternate; }
+  .b2 { left: 37%; -webkit-animation: on .9s 1.5s steps(6) forwards, swingB 23s 1.5s ease-in-out infinite alternate; animation: on .9s 1.5s steps(6) forwards, swingB 23s 1.5s ease-in-out infinite alternate; }
+  .b3 { left: 66%; -webkit-animation: on .9s 1.9s steps(6) forwards, swingC 19s 1.9s ease-in-out infinite alternate; animation: on .9s 1.9s steps(6) forwards, swingC 19s 1.9s ease-in-out infinite alternate; }
+  .b4 { left: 88%; -webkit-animation: on .9s 2.4s steps(6) forwards, swingD 26s 2.4s ease-in-out infinite alternate; animation: on .9s 2.4s steps(6) forwards, swingD 26s 2.4s ease-in-out infinite alternate; }
+  @-webkit-keyframes on { 0% { opacity: 0; } 30% { opacity: .8; } 45% { opacity: .1; } 100% { opacity: 1; } }
+  @keyframes on { 0% { opacity: 0; } 30% { opacity: .8; } 45% { opacity: .1; } 100% { opacity: 1; } }
+  @-webkit-keyframes swingA { from { -webkit-transform: rotate(-28deg); } to { -webkit-transform: rotate(12deg); } }
+  @keyframes swingA { from { transform: rotate(-28deg); } to { transform: rotate(12deg); } }
+  @-webkit-keyframes swingB { from { -webkit-transform: rotate(18deg); } to { -webkit-transform: rotate(-14deg); } }
+  @keyframes swingB { from { transform: rotate(18deg); } to { transform: rotate(-14deg); } }
+  @-webkit-keyframes swingC { from { -webkit-transform: rotate(-10deg); } to { -webkit-transform: rotate(24deg); } }
+  @keyframes swingC { from { transform: rotate(-10deg); } to { transform: rotate(24deg); } }
+  @-webkit-keyframes swingD { from { -webkit-transform: rotate(30deg); } to { -webkit-transform: rotate(-6deg); } }
+  @keyframes swingD { from { transform: rotate(30deg); } to { transform: rotate(-6deg); } }
+
+  /* Skyline: far blocks, then the landmarks. Blacked out, as Berlin was in 1942. */
+  .skyline { position: absolute; left: 0; right: 0; bottom: 236px; height: 30%; }
+  .street { position: absolute; left: 0; right: 0; bottom: 0; height: 237px; background: #07050f; }
+  .skyline svg { position: absolute; left: 0; bottom: 0; width: 100%; height: 100%; }
+  .ground { display: none; }
+
+  .vignette { background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 50%, rgba(0,0,0,.65) 100%); }
   .topline { position: absolute; left: 0; right: 0; top: 0; height: 3px;
     background: linear-gradient(90deg, #3d1f80, #8b4ce8, #c9a8ff, #8b4ce8, #3d1f80); }
 
-  .center { position: absolute; left: 0; right: 0; top: 50%; margin-top: -230px; text-align: center; }
-  .logo { width: 760px; max-width: 90%; height: auto;
-    -webkit-animation: glow 4s ease-in-out infinite alternate; animation: glow 4s ease-in-out infinite alternate; }
-  @-webkit-keyframes glow { from { -webkit-filter: drop-shadow(0 0 10px rgba(139,76,232,.35)); } to { -webkit-filter: drop-shadow(0 0 30px rgba(170,120,255,.75)); } }
-  @keyframes glow { from { filter: drop-shadow(0 0 10px rgba(139,76,232,.35)); } to { filter: drop-shadow(0 0 30px rgba(170,120,255,.75)); } }
-  .mode { margin-top: 10px; letter-spacing: 14px; font-size: 22px; font-weight: 700; color: #c9a8ff; padding-left: 14px; }
+  /* Header */
+  .brand { position: absolute; left: 64px; top: 56px; opacity: 0;
+    -webkit-animation: rise 1.2s .2s ease-out forwards; animation: rise 1.2s .2s ease-out forwards; }
+  .brand img { display: block; width: 600px; height: auto; margin-left: -6px;
+    -webkit-filter: drop-shadow(0 6px 24px rgba(139,76,232,.55)); filter: drop-shadow(0 6px 24px rgba(139,76,232,.55)); }
+  .mode { margin-top: 18px; font-size: 44px; line-height: 44px; color: #fff; letter-spacing: 2px; }
+  .mode span { color: #b995f5; }
+  .sub { margin-top: 8px; font-size: 17px; color: #b8a8dc; letter-spacing: .5px; }
+  @-webkit-keyframes rise { from { opacity: 0; -webkit-transform: translateY(14px); } to { opacity: 1; -webkit-transform: translateY(0); } }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 
-  .loader { width: 620px; max-width: 86%; margin: 44px auto 0; }
-  .bar { height: 8px; background: rgba(255,255,255,.08); border-radius: 8px; overflow: hidden; }
-  .fill { height: 100%; width: 0; border-radius: 8px; background: linear-gradient(90deg, #6a35d0, #b995f5);
-    box-shadow: 0 0 14px rgba(185,149,245,.8); -webkit-transition: width .4s; transition: width .4s; }
-  .row { overflow: hidden; margin-top: 10px; font-size: 13px; letter-spacing: 2px; color: #a996d4; }
-  .row .l { float: left; } .row .r { float: right; }
-  .file { display: block; margin-top: 4px; font-size: 11px; color: #7d6aa8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 1px; }
+  .date { position: absolute; right: 64px; top: 60px; text-align: right; opacity: 0;
+    -webkit-animation: rise 1.2s .5s ease-out forwards; animation: rise 1.2s .5s ease-out forwards; }
+  .date .city { font-size: 15px; color: #b995f5; letter-spacing: 1px; }
+  .date .day { margin-top: 4px; font-size: 30px; line-height: 32px; color: #fff; }
+  .date .clock { margin-top: 2px; font-size: 64px; line-height: 64px; color: #fff; letter-spacing: 2px; }
 
-  .bottom { position: absolute; left: 32px; right: 32px; bottom: 28px; }
-  .card { background: rgba(20,12,40,.72); border: 1px solid rgba(139,76,232,.35); border-radius: 12px; padding: 14px 18px; }
-  .server { float: left; width: 330px; }
-  .server b { display: block; font-size: 12px; letter-spacing: 3px; color: #c9a8ff; margin-bottom: 6px; }
-  .server span { display: block; font-size: 14px; color: #e6dcff; line-height: 20px; }
-  .tip { position: absolute; left: 50%; bottom: 0; width: 520px; margin-left: -260px; text-align: center;
-    -webkit-transition: opacity .4s; transition: opacity .4s; }
-  .tip b { display: block; font-size: 12px; letter-spacing: 3px; color: #c9a8ff; margin-bottom: 6px; }
-  .tip span { font-size: 15px; color: #e6dcff; line-height: 21px; }
-  .factions { float: right; }
-  .chip { display: inline-block; margin-left: 8px; padding: 10px 14px; border-radius: 10px; font-size: 13px; letter-spacing: 3px;
-    font-weight: 700; background: rgba(20,12,40,.72); border: 1px solid rgba(255,255,255,.08); border-bottom: 3px solid; }
-  .ice { color: #b9b7e8; border-bottom-color: #b9b7e8; } .afa { color: #dbbce6; border-bottom-color: #dbbce6; }
-  .pat { color: #b49cda; border-bottom-color: #b49cda; } .mig { color: #ccd4f2; border-bottom-color: #ccd4f2; }
-  @media (max-width: 1100px) { .tip { display: none; } }
+  /* Bottom console, slanted like the in-game menus. */
+  .console { position: absolute; left: 64px; right: 64px; bottom: 44px; }
+  .row { position: relative; height: 112px; margin-bottom: 18px; }
+  .slant { -webkit-transform: skewX(-14deg); transform: skewX(-14deg); }
+  .unslant { -webkit-transform: skewX(14deg); transform: skewX(14deg); }
+  .panel { position: absolute; top: 0; height: 112px; background: #120c26;
+    border-left: 4px solid #8b4ce8; box-shadow: 0 10px 30px rgba(0,0,0,.45); }
+  .panel .unslant { padding: 18px 28px; }
+  .panel .kind { font-size: 14px; color: #b995f5; letter-spacing: 1px; margin-bottom: 6px; }
+  .panel .text { font-size: 19px; line-height: 25px; color: #efe9fb; }
+  .tip { left: 10px; width: 58%; -webkit-transition: opacity .45s; transition: opacity .45s; }
+  .server { right: 10px; width: 36%; }
+  .server .name { font-size: 24px; line-height: 28px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .server .meta { margin-top: 6px; font-size: 16px; color: #b8a8dc; }
+  .server .meta b { color: #fff; font-weight: normal; }
+
+  .loader { position: relative; }
+  .track { height: 26px; margin: 0 10px; background: rgba(14,9,30,.86); border: 1px solid rgba(139,76,232,.45); overflow: hidden; }
+  .fill { height: 100%; width: 0;
+    background: -webkit-repeating-linear-gradient(-45deg, #7c3fe0 0, #7c3fe0 14px, #9a64f0 14px, #9a64f0 28px);
+    background: repeating-linear-gradient(-45deg, #7c3fe0 0, #7c3fe0 14px, #9a64f0 14px, #9a64f0 28px);
+    box-shadow: 0 0 18px rgba(185,149,245,.7); -webkit-transition: width .5s; transition: width .5s; }
+  .status { overflow: hidden; margin: 10px 24px 0; font-size: 15px; color: #b8a8dc; }
+  .status .l { float: left; color: #efe9fb; }
+  .status .r { float: right; color: #fff; }
+  .file { display: block; margin: 4px 24px 0; font-size: 12px; color: #7d6aa8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; height: 16px; }
+
+  @media (max-width: 1500px) {
+    .brand { left: 40px; top: 36px; } .brand img { width: 460px; } .mode { font-size: 36px; line-height: 36px; }
+    .date { right: 40px; top: 40px; } .date .clock { font-size: 52px; line-height: 52px; }
+    .console { left: 40px; right: 40px; bottom: 30px; }
+    .panel .text { font-size: 17px; line-height: 23px; }
+  }
+  @media (max-width: 1100px) {
+    .brand img { width: 340px; } .date .day { font-size: 22px; } .date .clock { font-size: 40px; line-height: 40px; }
+    .tip { width: 100%; } .server { display: none; }
+  }
 </style>
 </head>
 <body>
-<div class="bg"></div>
-<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
-<div class="sweep"></div>
-<div class="vignette"></div>
+<div class="layer sky"></div>
+<div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
+<div class="layer haze"></div>
+<div class="beam b1"></div><div class="beam b2"></div><div class="beam b3"></div><div class="beam b4"></div>
+
+<div class="skyline">
+  <svg viewBox="0 0 1920 320" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+    <g id="far" fill="#1a1133"></g>
+    <g id="mid" fill="#0f0a20"></g>
+    <g fill="#07050f">
+      <!-- Funkturm -->
+      <path d="M222 320 L254 108 L238 108 L238 96 L282 96 L282 108 L266 108 L298 320 Z"/>
+      <rect x="230" y="244" width="60" height="9"/>
+      <rect x="259" y="38" width="2" height="60"/>
+      <!-- Siegessaeule -->
+      <rect x="488" y="292" width="64" height="28"/>
+      <rect x="503" y="252" width="34" height="42"/>
+      <rect x="512" y="124" width="16" height="130"/>
+      <rect x="508" y="116" width="24" height="9"/>
+      <path d="M514 116 L519 92 L516 84 L520 76 L524 84 L521 92 L526 116 Z"/>
+      <path d="M520 90 L506 82 L512 92 Z M520 90 L534 82 L528 92 Z"/>
+      <!-- Brandenburger Tor -->
+      <rect x="714" y="246" width="34" height="74"/>
+      <rect x="972" y="246" width="34" height="74"/>
+      <rect x="748" y="298" width="224" height="22"/>
+      <rect x="758" y="210" width="15" height="90"/>
+      <rect x="794" y="210" width="15" height="90"/>
+      <rect x="830" y="210" width="15" height="90"/>
+      <rect x="875" y="210" width="15" height="90"/>
+      <rect x="911" y="210" width="15" height="90"/>
+      <rect x="947" y="210" width="15" height="90"/>
+      <rect x="752" y="184" width="216" height="27"/>
+      <rect x="818" y="170" width="84" height="15"/>
+      <path d="M832 170 L834 156 L842 150 L846 140 L852 146 L858 152 L866 150 L872 140 L878 146 L882 156 L888 170 Z"/>
+      <rect x="858" y="128" width="4" height="22"/>
+      <!-- Reichstag -->
+      <rect x="1080" y="198" width="320" height="122"/>
+      <rect x="1080" y="160" width="50" height="40"/>
+      <rect x="1350" y="160" width="50" height="40"/>
+      <path d="M1080 160 L1105 146 L1130 160 Z M1350 160 L1375 146 L1400 160 Z"/>
+      <path d="M1186 200 L1240 176 L1294 200 Z"/>
+      <path d="M1190 178 Q1240 98 1290 178 Z"/>
+      <rect x="1236" y="88" width="8" height="18"/>
+      <!-- Berliner Dom -->
+      <rect x="1556" y="222" width="208" height="98"/>
+      <rect x="1562" y="172" width="32" height="52"/>
+      <rect x="1726" y="172" width="32" height="52"/>
+      <path d="M1562 174 Q1578 140 1594 174 Z M1726 174 Q1742 140 1758 174 Z"/>
+      <rect x="1618" y="160" width="84" height="64"/>
+      <path d="M1612 166 Q1660 62 1708 166 Z"/>
+      <rect x="1655" y="66" width="10" height="26"/>
+      <rect x="1659" y="48" width="2" height="20"/>
+    </g>
+    <g id="near" fill="#07050f"></g>
+  </svg>
+  <div class="ground"></div>
+</div>
+<div class="street"></div>
+<div class="layer vignette"></div>
 <div class="topline"></div>
 
-<div class="center">
-  <img class="logo" src="../valhalla_logo_v3.png" alt="Valhalla Networks">
-  <div class="mode">1942 RP</div>
-  <div class="loader">
-    <div class="bar"><div class="fill" id="fill"></div></div>
-    <div class="row"><span class="l" id="stage">CONNECTING</span><span class="r" id="count"></span></div>
-    <span class="file" id="file"></span>
-  </div>
+<div class="brand">
+  <img src="../valhalla_wordmark.png" alt="Valhalla Networks">
+  <div class="mode cond">1942 <span>RP</span></div>
+  <div class="sub">Berlin, capital of the Reich. Serious roleplay.</div>
 </div>
 
-<div class="bottom">
-  <div class="card server">
-    <b>SERVER</b>
-    <span id="server">Valhalla Networks | 1942 RP</span>
-    <span id="map">Berlin, 1942 - serious roleplay</span>
+<div class="date cond">
+  <div class="city">Berlin</div>
+  <div class="day" id="day">Thursday, 1 October 1942</div>
+  <div class="clock" id="clock">00:00</div>
+</div>
+
+<div class="console">
+  <div class="row">
+    <div class="panel tip slant" id="tip">
+      <div class="unslant"><div class="kind cond" id="tipKind">Tip</div><div class="text" id="tipText">Press F1 for your character, inventory and the handbook.</div></div>
+    </div>
+    <div class="panel server slant">
+      <div class="unslant">
+        <div class="kind cond">Server</div>
+        <div class="name cond" id="server">Valhalla Networks | 1942 RP</div>
+        <div class="meta" id="meta">Connecting</div>
+      </div>
+    </div>
   </div>
-  <div class="card tip" id="tip"><b>TIP</b><span id="tipText">Press F1 for your character, inventory and attributes.</span></div>
-  <div class="factions">
-    <span class="chip ice">WEHRMACHT</span><span class="chip afa">STATE</span><span class="chip pat">POLICE</span><span class="chip mig">CIVILIANS</span>
+  <div class="loader">
+    <div class="track slant"><div class="fill" id="fill"></div></div>
+    <div class="status cond"><span class="l" id="stage">Connecting</span><span class="r" id="count"></span></div>
+    <span class="file" id="file"></span>
   </div>
 </div>
 
@@ -97,44 +212,106 @@
   // Garry's Mod loading screen callbacks (ES5 only). The page also works in a normal browser.
   var total = 0, needed = 0, tipIndex = 0;
   var tips = [
-    "Press F1 for your character, inventory and attributes.",
-    "Press F3 to introduce yourself. Strangers only see your description.",
-    "Stay in character. Use // or /ooc for out-of-character chat, /me and /it for actions.",
-    "Everyone starts as a civilian. Military and state factions are whitelisted - apply in game.",
-    "Uniform lockers in every barracks: change your uniform, rank insignia and gear.",
-    "Soldiers: the quartermaster of your unit resupplies ammunition and signs out weapons.",
-    "Open a bank account with the banker of the Reichsbank. Tellers handle deposits and transfers.",
-    "Look at a door and press F2 to buy, lock or manage it.",
-    "Wear [V-N] in your Steam name to show you belong to Valhalla Networks."
+    ["Tip", "Press F1 for your character, inventory and the handbook with every command."],
+    ["Tip", "Strangers only see your description. Press F3 to introduce yourself."],
+    ["Rule", "Stay in character. Use // or /ooc for out-of-character chat."],
+    ["Tip", "Everyone starts as a civilian. Wehrmacht, police and state factions are whitelisted - apply in game or on Discord."],
+    ["Tip", "Show your identity card with /showid. The police can check it at any time."],
+    ["Tip", "Find your first job at the Arbeitsamt. Your pay arrives on time."],
+    ["Tip", "The uniform locker in your barracks sets your uniform, rank insignia and gear."],
+    ["Tip", "Your unit's quartermaster sells weapons and ammunition."],
+    ["Tip", "Buy your own vehicle at the car dealer. Only you can drive it - share keys with /carkeys."],
+    ["Tip", "The casino gives you one free spin on the wheel every day."],
+    ["Tip", "Press C for the over-the-shoulder view. Use /anim to stand at attention or salute."],
+    ["Rule", "No random killing, no running people over. Every conflict needs a roleplay reason."],
+    ["Rule", "What only you know out of game, your character does not know."],
+    ["Tip", "The roll of honour lists Berlin's most experienced citizens: /top"],
+    ["Tip", "Your first visit downloads all content once. After that you join in seconds."]
   ];
+
+  var stages = [
+    [/retrieving server info/i, "Retrieving server info"],
+    [/sending client info/i, "Signing in"],
+    [/workshop|mounting|addon/i, "Mounting workshop content"],
+    [/lua|starting|initializing|client/i, "Preparing Berlin"],
+    [/download/i, "Downloading content"],
+    [/precach|loading/i, "Loading the world"]
+  ];
+
   function el(id) { return document.getElementById(id); }
-  function progress() {
-    if (total > 0) {
-      var done = Math.max(0, total - needed);
-      el("fill").style.width = Math.min(100, done / total * 100) + "%";
-      el("count").textContent = Math.round(done / total * 100) + "%  (" + done + " / " + total + ")";
+  function pad(n) { return n < 10 ? "0" + n : "" + n; }
+
+  // Today, 84 years ago: the in-game date follows the real calendar.
+  var DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  var MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  function clock() {
+    var now = new Date();
+    var then = new Date(1942, now.getMonth(), now.getDate());
+    el("day").textContent = DAYS[then.getDay()] + ", " + then.getDate() + " " + MONTHS[then.getMonth()] + " 1942";
+    el("clock").textContent = pad(now.getHours()) + ":" + pad(now.getMinutes());
+  }
+  clock(); setInterval(clock, 10000);
+
+  // Deterministic rooftops so the skyline looks the same on every load.
+  var seed = 1942;
+  function rnd() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+  function blocks(id, minH, maxH, minW, maxW) {
+    var g = el(id), x = -20, svgns = "http://www.w3.org/2000/svg";
+    while (x < 1940) {
+      var w = minW + rnd() * (maxW - minW), h = minH + rnd() * (maxH - minH);
+      var r = document.createElementNS(svgns, "rect");
+      r.setAttribute("x", x); r.setAttribute("y", 320 - h); r.setAttribute("width", w + 1); r.setAttribute("height", h);
+      g.appendChild(r);
+      if (rnd() > 0.7) { // pitched roof
+        var p = document.createElementNS(svgns, "path");
+        p.setAttribute("d", "M" + x + " " + (320 - h) + " L" + (x + w / 2) + " " + (320 - h - 14) + " L" + (x + w) + " " + (320 - h) + " Z");
+        g.appendChild(p);
+      }
+      x += w;
     }
   }
+  blocks("far", 90, 170, 40, 110);
+  blocks("mid", 55, 110, 50, 130);
+  blocks("near", 18, 46, 60, 160);
+
+  function progress() {
+    if (total > 0) {
+      var done = Math.max(0, total - needed), pct = Math.min(100, Math.round(done / total * 100));
+      el("fill").style.width = pct + "%";
+      el("count").textContent = pct + " %   " + done + " / " + total + " files";
+    }
+  }
+  function prettyMap(map) {
+    if (/bnsberlin|berlin/i.test(map || "")) return "Berlin";
+    return map || "";
+  }
   function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
-    el("server").textContent = servername || "Valhalla Networks";
-    el("map").textContent = (mapname || "") + "  |  " + (maxplayers || "?") + " slots";
+    el("server").textContent = servername || "Valhalla Networks | 1942 RP";
+    el("meta").innerHTML = "Map <b>" + prettyMap(mapname) + "</b>&nbsp;&nbsp;&nbsp;Slots <b>" + (maxplayers || "?") + "</b>";
   }
   function SetFilesTotal(value) { total = Number(value) || 0; progress(); }
   function SetFilesNeeded(value) { needed = Number(value) || 0; progress(); }
-  function DownloadingFile(name) { el("stage").textContent = "DOWNLOADING"; el("file").textContent = name || ""; }
-  function SetStatusChanged(status) {
-    el("stage").textContent = String(status || "LOADING").toUpperCase();
-    if (/client info/i.test(status || "")) { el("fill").style.width = "100%"; el("count").textContent = "100%"; }
+  function DownloadingFile(name) {
+    el("stage").textContent = "Downloading content";
+    el("file").textContent = name || "";
   }
+  function SetStatusChanged(status) {
+    var s = String(status || ""), text = s;
+    for (var i = 0; i < stages.length; i++) { if (stages[i][0].test(s)) { text = stages[i][1]; break; } }
+    el("stage").textContent = text || "Loading";
+    if (/client info/i.test(s)) { el("fill").style.width = "100%"; el("count").textContent = "100 %"; }
+  }
+
   setInterval(function () {
     var tip = el("tip");
     tip.style.opacity = 0;
     setTimeout(function () {
       tipIndex = (tipIndex + 1) % tips.length;
-      el("tipText").textContent = tips[tipIndex];
+      el("tipKind").textContent = tips[tipIndex][0];
+      el("tipText").textContent = tips[tipIndex][1];
       tip.style.opacity = 1;
-    }, 400);
-  }, 7000);
+    }, 450);
+  }, 8000);
 </script>
 </body>
 </html>
