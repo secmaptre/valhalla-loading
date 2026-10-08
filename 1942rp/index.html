@@ -66,6 +66,16 @@
   .mode { margin-top: 18px; font-size: 44px; line-height: 44px; color: #fff; letter-spacing: 2px; }
   .mode span { color: #b995f5; }
   .sub { margin-top: 8px; font-size: 17px; color: #b8a8dc; letter-spacing: .5px; }
+  .join { margin-top: 6px; font-size: 17px; color: #fff; letter-spacing: .5px; }
+  .join span { color: #c9a8ff; }
+
+  /* Event banner under the brand: the opening weekend (gold), set by the calendar in the script below. */
+  .event { position: absolute; left: 64px; top: 356px; max-width: 760px; display: none; opacity: 0;
+    -webkit-animation: rise 1.2s .9s ease-out forwards; animation: rise 1.2s .9s ease-out forwards; }
+  .event .box { background: #1a1308; border-left: 4px solid #d9b44a; box-shadow: 0 10px 30px rgba(0,0,0,.45); }
+  .event .unslant { padding: 14px 26px; }
+  .event .kind { font-size: 14px; color: #e4c66a; letter-spacing: 2px; margin-bottom: 4px; }
+  .event .text { font-size: 19px; line-height: 25px; color: #fff6dc; }
   @-webkit-keyframes rise { from { opacity: 0; -webkit-transform: translateY(14px); } to { opacity: 1; -webkit-transform: translateY(0); } }
   @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -107,10 +117,12 @@
     .date { right: 40px; top: 40px; } .date .clock { font-size: 52px; line-height: 52px; }
     .console { left: 40px; right: 40px; bottom: 30px; }
     .panel .text { font-size: 17px; line-height: 23px; }
+    .event { left: 40px; top: 300px; max-width: 620px; } .event .text { font-size: 17px; line-height: 23px; }
   }
   @media (max-width: 1100px) {
     .brand img { width: 340px; } .date .day { font-size: 22px; } .date .clock { font-size: 40px; line-height: 40px; }
     .tip { width: 100%; } .server { display: none; }
+    .event { top: 250px; max-width: 480px; }
   }
 </style>
 </head>
@@ -179,7 +191,15 @@
 <div class="brand">
   <img src="../valhalla_wordmark.png" alt="Valhalla Networks">
   <div class="mode cond">1942 <span>RP</span></div>
-  <div class="sub">Berlin, capital of the Reich. Serious roleplay.</div>
+  <div class="sub">Berlin, capital of the Reich. Serious roleplay. Open factions - resistance vs police.</div>
+  <div class="join cond">Discord <span>discord.gg/QaGuEaCjNZ</span></div>
+</div>
+
+<div class="event" id="event">
+  <div class="box slant"><div class="unslant">
+    <div class="kind cond" id="eventKind">OPENING WEEKEND</div>
+    <div class="text" id="eventText"></div>
+  </div></div>
 </div>
 
 <div class="date cond">
@@ -216,11 +236,20 @@
 <script>
   // Garry's Mod loading screen callbacks (ES5 only). The page also works in a normal browser.
   var total = 0, needed = 0, tipIndex = 0;
+
+  // Opening weekend: Friday 9 October 18:00 to Monday 12 October 06:00 Berlin time (CEST = UTC+2).
+  var OPEN_FROM = Date.UTC(2026, 9, 9, 16, 0), OPEN_TO = Date.UTC(2026, 9, 12, 4, 0);
+  var nowMs = new Date().getTime();
+  var openingLive = nowMs >= OPEN_FROM && nowMs < OPEN_TO, openingSoon = nowMs < OPEN_FROM;
+
   var tips = [
+    ["Start here", "First steps: follow the marker to the Arbeitsamt for a job, then press F1 - the arrival steps pay a 1,000 RM start bonus."],
+    ["Start here", "Open factions: Army, Air Force, Navy, City Police and the Party Office take recruits right away - talk to the recruiter marked on your map."],
+    ["Start here", "Join the Discord to find players and events: discord.gg/QaGuEaCjNZ - most people are online in the evening, Berlin and US time."],
+    ["New", "New uniform collection: over 100 new uniforms for the Army, Air Force, Navy and the guard units in every uniform locker."],
     ["New", "The war on the walls: party members paste posters all over Berlin - the resistance tears them down or sprays over them."],
-    ["New", "New in town? Follow the arrival checklist on the right: five first steps and a 1,000 RM start bonus."],
     ["New", "Did a friend bring you here? Name them after your first spawn - you both get a bonus once you have played 2 hours."],
-    ["New", "Weekend offensive: every Saturday and Sunday at 20:00 Berlin time - double pay, double XP and bounties."],
+    ["New", "Weekend offensive: Saturday and Sunday at 20:00 Berlin time, plus 20:00 New York time - double pay, double XP and bounties."],
     ["Tip", "Press F1 for your character, inventory and the handbook with every command."],
     ["Tip", "Strangers only see your description. Press F3 to introduce yourself."],
     ["Rule", "Stay in character. Use // or /ooc for out-of-character chat."],
@@ -236,8 +265,14 @@
     ["Rule", "What only you know out of game, your character does not know."],
     ["Tip", "The roll of honour lists Berlin's most experienced citizens: /top"],
     ["Tip", "Your first visit downloads all content once. After that you join in seconds."],
-    ["Tip", "Bringing friends? Tell them to subscribe to our Workshop collection first - Steam downloads it in the background."]
+    ["Tip", "Bringing friends? Tell them to subscribe to the Workshop collection \"Valhalla Networks | Content\" first - Steam downloads it in the background."]
   ];
+  if (openingLive) {
+    tips.unshift(["Opening weekend", "Founders' pay: while fewer than ten citizens are online, everybody on duty gets 100 RM and service XP every 15 minutes. Bring your friends."]);
+    tips.unshift(["Opening weekend", "Live until Monday 06:00 Berlin time: double pay at the Arbeitsamt and double service XP for everybody."]);
+  } else if (openingSoon) {
+    tips.unshift(["Opening weekend", "Friday 9 October, 18:00 Berlin time (12:00 New York): double pay, double XP and Founders' pay all weekend. Be there from the first minute."]);
+  }
 
   var stages = [
     [/retrieving server info/i, "Retrieving server info"],
@@ -261,6 +296,21 @@
     el("clock").textContent = pad(now.getHours()) + ":" + pad(now.getMinutes());
   }
   clock(); setInterval(clock, 10000);
+
+  // The event banner: before the opening weekend a date, during it the boosts, afterwards nothing.
+  (function () {
+    var banner = el("event");
+    if (openingLive) {
+      el("eventKind").textContent = "OPENING WEEKEND - LIVE";
+      el("eventText").textContent = "Double pay and double XP until Monday 06:00 Berlin time. Founders' pay every 15 minutes while the city fills up.";
+    } else if (openingSoon) {
+      el("eventKind").textContent = "OPENING WEEKEND";
+      el("eventText").textContent = "Friday 9 October, 18:00 Berlin time (12:00 New York) until Monday morning: double pay, double XP, Founders' pay.";
+    } else {
+      return;
+    }
+    banner.style.display = "block";
+  })();
 
   // Period music while loading (public domain record). Quiet, starts by itself where the browser allows it.
   var music = el("music");
