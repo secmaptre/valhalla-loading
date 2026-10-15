@@ -206,12 +206,7 @@
   <div class="city">Berlin</div>
   <div class="day" id="day">Thursday, 1 October 1942</div>
   <div class="clock" id="clock">00:00</div>
-  <div class="city" id="music-note">Das Argonnerwaldlied &mdash; soldiers' song, 1915</div>
 </div>
-<audio id="music" autoplay loop preload="auto">
-  <source src="../audio/argonnerlied.ogg" type="audio/ogg">
-  <source src="../audio/argonnerlied.mp3" type="audio/mpeg">
-</audio>
 
 <div class="console">
   <div class="row">
@@ -311,15 +306,6 @@
     }
     banner.style.display = "block";
   })();
-
-  // Period music while loading (public domain record). Quiet, starts by itself where the browser allows it.
-  var music = el("music");
-  if (music) {
-    music.volume = 0.35;
-    var tryPlay = function () { if (music.paused && music.play) { var p = music.play(); if (p && p.catch) p.catch(function () {}); } };
-    tryPlay();
-    setTimeout(tryPlay, 1500);
-  }
 
   // Deterministic rooftops so the skyline looks the same on every load.
   var seed = 1942;
